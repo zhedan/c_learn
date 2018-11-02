@@ -1,24 +1,51 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include "single_list.h"
 
-struct SL_NODE{
-  int value;
-  struct SL_NODE *next;
-};
-
-typedef struct SL_NODE SL_NODE;
-
-typedef struct SL{
-  SL_NODE *head;
-  SL_NODE *tail;
-} SL;
 
 SL* sl_new(){
   SL * new_slist = (SL*)malloc(sizeof(SL));
   new_slist->head = NULL;
   new_slist->tail = NULL;
+  new_slist->length = 0;
 
   return new_slist;
+}
+
+SL* sl_from_array(int *arr, int n){
+  SL *slist = sl_new();
+  for (int i=0; i<n; i++) {
+    sl_add(slist, i);
+  }
+
+  return slist;
+}
+
+int sl_compare(SL *first, SL *second) {
+  if (first->length > second->length) {
+    return 1;
+  }
+  else if (first->length < second->length) {
+    return -1;
+  }
+  else {
+    SL_NODE *p1, *p2;
+    p1 = first->head;
+    p2 = second->head;
+
+    for(; p1;){
+      if ( p1->value > p2->value) {
+        return 1;
+      }
+      else if (p1->value < p2->value) {
+        return -1;
+      }
+      else {
+        p1 = p1->next;
+        p2 = p2->next;
+      }
+    }
+  }
 }
 
 SL_NODE* sl_head(SL *slist){
@@ -37,14 +64,13 @@ void sl_add(SL *slist, int i){
     slist->tail->next = node;
   }
   slist->tail = node;
+  slist->length++;
 }
 
 void sl_delete(SL *slist, int i) {
     
 }
 
-#define SL_FOREACH(var, head, field) \
-  for ((var)=(head); (var); (var)=(var)->field)
 
 void sl_reverse(SL *slist){
   SL_NODE *p1, *p2, *p3;
@@ -98,14 +124,3 @@ void sl_print(SL *slist) {
   printf("\n");
 }
 
-int main(){
-  SL *slist = sl_new();
-
-  for(int i=0; i < 10; i++){
-    sl_add(slist, i);
-  }
-  sl_reverse(slist);
-  sl_print(slist);
-  sl_reverse(slist);
-  sl_print(slist);
-}
